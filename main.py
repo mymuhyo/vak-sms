@@ -1,3 +1,7 @@
+'''
+Bu vak-sms.com site api idan foydalanib teegram orqali raqam olish va sms code ni qabul qilish uchun
+'''
+
 # bot = Bot(token='6219627123:AAEVQ7uQCl7d33LGcauEUkYIen_rMbVZ9tA')
 
 import logging
@@ -14,16 +18,18 @@ dp = Dispatcher(bot)
 # Handler for the /start command
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
+    ''' Start buyrug'i uchun '''
     await message.reply("Hello! I'm your Telegram bot.")
 
 # Handler for the "Get Balance" button
-@dp.message_handler(text='Get Balance')
+@dp.message_handler(commands=['getbalance'])
 async def get_balance(message: types.Message):
+    ''' Balansni olish'''
     api_key = 'e2ac1e74152c4470927da98ad5a792c6'  # Replace with your actual VAKSMS API key
     url = f'https://vak-sms.com/stubs/handler_api.php?api_key={api_key}&action=getBalance'
 
     try:
-        response = requests.get(url)
+        response = requests.get(url , timeout=5)
         response.raise_for_status()
         data = response.text.split(":")
         print("Response:", response.text)  # Print the response for debugging
@@ -33,8 +39,8 @@ async def get_balance(message: types.Message):
             await message.reply(f"Your balance is: {balance}")
         else:
             await message.reply("Invalid response format.")
-    except requests.exceptions.RequestException as e:
-        await message.reply(f"An error occurred: {e}")
+    except requests.exceptions.RequestException as error:
+        await message.reply(f"An error occurred: {error}")
 
 
 # Start the bot
